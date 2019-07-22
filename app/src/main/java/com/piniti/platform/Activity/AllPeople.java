@@ -53,7 +53,7 @@ public class AllPeople extends AppCompatActivity {
     private DatabaseReference mDatabase;
     public Toolbar mToolbar;
     private List<AddPeople> peoples;
-
+        ///    Animash
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
