@@ -27,9 +27,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mobile = (EditText) findViewById(R.id.mobile);
+        mobile = findViewById(R.id.mobile);
 
-        button = (Button) findViewById(R.id.button);
+        button = findViewById(R.id.button);
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -63,7 +63,6 @@ public class MainActivity extends AppCompatActivity {
         if(no.isEmpty() || no.length() < 10){
             mobile.setError("Enter a valid mobile");
             mobile.requestFocus();
-            return;
         }
     }
 

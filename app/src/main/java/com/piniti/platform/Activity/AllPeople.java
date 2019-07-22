@@ -51,12 +51,8 @@ public class AllPeople extends AppCompatActivity {
 
     private RecyclerView mPeopleList;
     private DatabaseReference mDatabase;
-    SharedPreferences mSheredPre;
-    LinearLayoutManager mLayoutManager;
     public Toolbar mToolbar;
-    private AddPeople mAdapter;
     private List<AddPeople> peoples;
-    private Query familySearchQuery;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,25 +60,18 @@ public class AllPeople extends AppCompatActivity {
         setContentView(R.layout.activity_all_people);
 
         // back Button...
-        mToolbar = (Toolbar) findViewById(R.id.all_people_app_main_tool_bar);
+        mToolbar = findViewById(R.id.all_people_app_main_tool_bar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("All People");
 
         peoples = new ArrayList<>();
-       // mAdapter = new filterAdapter(this, peoples, this);
 
-        mPeopleList = (RecyclerView) findViewById(R.id.recycler);
+        mPeopleList = findViewById(R.id.recycler);
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
         mPeopleList.setHasFixedSize(true);
         mPeopleList.setLayoutManager(new LinearLayoutManager(this));
 
-        /*RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-        recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.addItemDecoration(new MyDividerItemDecoration(this, DividerItemDecoration.VERTICAL, 36));
-        recyclerView.setAdapter(mAdapter);
-*/
     }
 
     @Override
