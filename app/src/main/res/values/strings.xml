@@ -1,0 +1,45 @@
+<resources>
+    <string name="app_name">PINITI</string>
+    <string name="title_activity_home">HomeActivity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+
+    <array name="gender">
+        <item>Gender..?</item>
+        <item>Male</item>
+        <item>Female</item>
+        <item>Others</item>
+    </array>
+    <array name="category">
+        <item>Group?</item>
+        <item>Family Members</item>
+        <item>Relatives</item>
+        <item>Friends</item>
+        <item>Neighbors</item>
+        <item>Co-Worker</item>
+        <item>Important People</item>
+        <item>Spacial People</item>
+        <item>Following</item>
+        <item>Followers</item>
+        <item>Others</item>
+    </array>
+
+    <array name="relation">
+        <item>Relationship?</item>
+        <item>Single</item>
+        <item>In a Relationship</item>
+        <item>Engaged</item>
+        <item>Married</item>
+        <item>Separated</item>
+        <item>Divorced</item>
+        <item>Widowed</item>
+    </array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+</resources>

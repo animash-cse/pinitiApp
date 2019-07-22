@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.piniti.platform">
+
+    <!--
+    +1 650-555-3434
+    654321
+
+    pass(Key store password): PinitiProject1234
+
+    Key alias: piniti
+
+    Kye pass(Key password): PinitiProject123
+    -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher_icon"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_icon"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        android:name="android.support.multidex.MultiDexApplication">
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".VerifyMobile" />
+        <activity
+            android:name=".HomeActivity"
+            android:label="@string/title_activity_home"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ProfileActivity"
+            android:parentActivityName=".HomeActivity" />
+        <activity
+            android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:theme="@style/Base.Theme.AppCompat" />
+        <activity
+            android:name=".ShowProfile"
+            android:parentActivityName=".ProfileActivity" />
+        <activity android:name=".EditProfile" />
+        <activity
+            android:name=".Activity.PeopleList"
+            android:parentActivityName=".ProfileActivity" />
+        <activity
+            android:name=".Activity.AllPeople"
+            android:parentActivityName=".HomeActivity" />
+        <activity android:name=".Authentication" />
+        <activity android:name=".Activity.PeopleDetails" />
+        <activity android:name=".Activity.UserDetails" android:parentActivityName=".Activity.AllPeople" />
+        <activity android:name=".Activity.PeopleChat"></activity>
+
+        <service android:name="com.piniti.platform.Notification.MyFirebaseIdService"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+            </intent-filter>
+        </service>
+
+        <service android:name="com.piniti.platform.Notification.MyFirebaseMessaging"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+    </application>
+
+</manifest>

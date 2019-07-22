@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.piniti.platform.Activity.PeopleDetails">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:padding="10dp"
+            android:background="@drawable/button_design">
+
+            <RelativeLayout
+                android:id="@+id/image_lay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:id="@+id/people_image"
+                    android:layout_margin="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:scaleType="centerCrop"
+                    />
+                <Button
+                    android:id="@+id/edit_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Update"
+                    android:textSize="18dp"
+                    android:textStyle="bold"
+                    android:textColor="#ca9626"
+                    android:textAllCaps="false"
+                    android:visibility="invisible"
+                    android:background="@drawable/button_design"/>
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/lay_name"
+                android:layout_below="@+id/image_lay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/people_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Name"
+                    android:textColor="#fff" />
+                <Button
+                    android:id="@+id/name_edit"
+                    android:layout_width="30dp"
+                    android:layout_height="20dp"
+                    android:layout_alignEnd="@+id/people_name"
+                    android:text="Edit"
+                    android:textColor="#ca9626"
+                    android:textAllCaps="false"
+                    android:visibility="invisible"
+                    android:background="@color/colorPrimary"
+                    android:layout_alignRight="@+id/people_name" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/lay_des"
+                android:layout_below="@+id/lay_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/people_category"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Category"
+                    android:textColor="#fff" />
+                <Button
+                    android:id="@+id/cate_edit"
+                    android:layout_width="30dp"
+                    android:layout_height="20dp"
+                    android:layout_alignEnd="@+id/people_category"
+                    android:text="Edit"
+                    android:textColor="#ca9626"
+                    android:textAllCaps="false"
+                    android:visibility="invisible"
+                    android:background="@color/colorPrimary"
+                    android:layout_alignRight="@+id/people_category" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/lay_depart"
+                android:layout_below="@+id/lay_des"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/people_profession"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Profession"
+                    android:textColor="#fff" />
+                <Button
+                    android:id="@+id/profe_edit"
+                    android:layout_width="30dp"
+                    android:layout_height="20dp"
+                    android:layout_alignEnd="@+id/people_profession"
+                    android:text="Edit"
+                    android:textColor="#ca9626"
+                    android:textAllCaps="false"
+                    android:visibility="invisible"
+                    android:background="@color/colorPrimary"
+                    android:layout_alignRight="@+id/people_profession" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/lay_faculty"
+                android:layout_below="@+id/lay_depart"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/people_relation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Relation"
+                    android:textColor="#fff" />
+                <Button
+                    android:id="@+id/relation_edit"
+                    android:layout_width="30dp"
+                    android:layout_height="20dp"
+                    android:layout_alignEnd="@+id/people_relation"
+                    android:text="Edit"
+                    android:textColor="#ca9626"
+                    android:textAllCaps="false"
+                    android:visibility="invisible"
+                    android:background="@color/colorPrimary"
+                    android:layout_alignRight="@+id/people_relation" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/lay_number"
+                android:layout_below="@+id/lay_faculty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/people_number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Number"
+                    android:textColor="#fff" />
+                <Button
+                    android:id="@+id/number_edit"
+                    android:layout_width="30dp"
+                    android:layout_height="20dp"
+                    android:layout_alignEnd="@+id/people_number"
+                    android:text="Edit"
+                    android:textColor="#ca9626"
+                    android:textAllCaps="false"
+                    android:visibility="invisible"
+                    android:background="@color/colorPrimary"
+                    android:layout_alignRight="@+id/people_number" />
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <Button
+                android:id="@+id/remove"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Remove Info"
+                android:textAllCaps="false"
+                android:layout_margin="15dp"
+                android:padding="5dp"
+                android:textSize="18dp"
+                android:textColor="#fff"
+                android:visibility="invisible"
+                android:background="@drawable/button_design"
+                />
+
+            <Button
+                android:id="@+id/edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                android:background="@drawable/button_design"
+                android:text="Edit Info"
+                android:textAllCaps="false"
+                android:textColor="#fff"
+                android:visibility="invisible"
+                android:padding="5dp"
+                android:textSize="18dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+</ScrollView>

@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "823222706272",
+    "firebase_url": "https://piniti-91c2f.firebaseio.com",
+    "project_id": "piniti-91c2f",
+    "storage_bucket": "piniti-91c2f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:823222706272:android:2d7ba3197d83f0f9",
+        "android_client_info": {
+          "package_name": "com.piniti.platform"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "823222706272-8cjge502fu50jb5053h0sr9qf0qjnrtm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.piniti.platform",
+            "certificate_hash": "0f498b3d9522f82268748622bd70f1f57de20062"
+          }
+        },
+        {
+          "client_id": "823222706272-76ulha18hej91ogpm3f8uev0m93k0p8q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCsXUVIOTDACYyhxU9NZxFtKQqN6szDmd4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "823222706272-76ulha18hej91ogpm3f8uev0m93k0p8q.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

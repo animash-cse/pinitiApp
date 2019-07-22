@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.piniti.platform.Activity.PeopleList">
+
+    <include
+        android:id="@+id/people_list_app_main_tool_bar"
+        layout="@layout/app_bar_layout">
+    </include>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button_design"
+        android:padding="10dp"
+        android:text="My Family"/>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView2"
+        android:layout_width="match_parent"
+        android:layout_height="300dp">
+    </android.support.v7.widget.RecyclerView>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button_design"
+        android:padding="10dp"
+        android:text="Relatives"/>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_relatives"
+        android:layout_width="match_parent"
+        android:layout_height="300dp">
+    </android.support.v7.widget.RecyclerView>
+
+
+</LinearLayout>
