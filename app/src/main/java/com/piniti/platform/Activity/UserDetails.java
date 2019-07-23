@@ -1,6 +1,7 @@
 package com.piniti.platform.Activity;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
@@ -16,21 +18,33 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.piniti.platform.Notification.APIService;
+import com.piniti.platform.Notification.Client;
+import com.piniti.platform.Notification.Data;
+import com.piniti.platform.Notification.MyResponse;
+import com.piniti.platform.Notification.Sender;
+import com.piniti.platform.Notification.Token;
 import com.piniti.platform.R;
-import com.piniti.platform.ShowProfile;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class UserDetails extends AppCompatActivity {
 
     private ImageView mSelectImage;
     private TextView mName, mProfession, mEmail, mAddress, mPhone, mGender;
-    private Button chatButton;
+    private Button chatButton, followButton;
 
     private String URL;
-    private String mPost_key = null;
+    private String userKey = null;
 
-    private DatabaseReference databaseUser;
-    private FirebaseUser currentFirebaseUser;
+    APIService apiService;
+
+    private DatabaseReference databaseUser,reference;
+    private FirebaseUser fuser;
     public Toolbar mToolbar;
     Intent intent;
     @Override
@@ -38,9 +52,13 @@ public class UserDetails extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_details);
 
+        apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
+        fuser = FirebaseAuth.getInstance().getCurrentUser();
+        reference = FirebaseDatabase.getInstance().getReference();
+
         intent = getIntent();
-        mPost_key = intent.getStringExtra("post_id");
-      //  mPost_key = getIntent().getExtras().getString("post_id");
+        userKey = intent.getStringExtra("post_id");
+      //  userKey = getIntent().getExtras().getString("post_id");
 
         // back Button...
         mToolbar = (Toolbar) findViewById(R.id.show_profile_app_main_tool_bar);
@@ -49,6 +67,7 @@ public class UserDetails extends AppCompatActivity {
         getSupportActionBar().setTitle("User Details");
 
         chatButton = (Button) findViewById(R.id.peopleChat);
+        followButton = findViewById(R.id.follow);
 
         mSelectImage = (ImageView) findViewById(R.id.imageView);
         mGender = (TextView) findViewById(R.id.gender);
@@ -59,15 +78,46 @@ public class UserDetails extends AppCompatActivity {
         mPhone = (TextView) findViewById(R.id.number);
         mAddress = (TextView) findViewById(R.id.address);
 
-        currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
 
         chatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(UserDetails.this, PeopleChat.class);
-                intent.putExtra("post_id", mPost_key);
+                intent.putExtra("post_id", userKey);
                 startActivity(intent);
+            }
+        });
+
+        followButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //sendNotification(fuser.getUid(), userKey, "Test Follow notification");
+
+                final DatabaseReference chatRef = FirebaseDatabase.getInstance().getReference("Follow")
+                        .child(fuser.getUid())
+                        .child(userKey);
+                chatRef.child("id").setValue(userKey);
+
+                final DatabaseReference chatRefReceiver = FirebaseDatabase.getInstance().getReference("Chatlist")
+                        .child(userKey)
+                        .child(fuser.getUid());
+                chatRefReceiver.child("id").setValue(fuser.getUid());
+
+
+                reference = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
+                reference.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        AddPeople user = dataSnapshot.getValue(AddPeople.class);
+                        sendNotification(userKey, user.getName(), "Test Follow notification");
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
             }
         });
 
@@ -77,7 +127,7 @@ public class UserDetails extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        databaseUser = FirebaseDatabase.getInstance().getReference().child("Users").child(mPost_key);
+        databaseUser = FirebaseDatabase.getInstance().getReference().child("Users").child(userKey);
         databaseUser.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -91,10 +141,51 @@ public class UserDetails extends AppCompatActivity {
                 mGender.setText(dataSnapshot.child("gender").getValue(String.class));
                 Glide.with(getApplicationContext()).load(URL).into(mSelectImage);
 
+
+
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void sendNotification(String receiver, final String username, final String message){
+        DatabaseReference tokens = FirebaseDatabase.getInstance().getReference("Tokens");
+        Query query = tokens.orderByKey().equalTo(receiver);
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    Token token = snapshot.getValue(Token.class);
+                    Data data = new Data(fuser.getUid(), R.mipmap.ic_launcher, username+": "+message, "New Notification",
+                            userKey);
+
+                    Sender sender = new Sender(data, token.getToken());
+
+                    apiService.sendNotification(sender)
+                            .enqueue(new Callback<MyResponse>() {
+                                @Override
+                                public void onResponse(Call<MyResponse> call, Response<MyResponse> response) {
+                                    if (response.code() == 200){
+                                        if (response.body().success != 1){
+                                            Toast.makeText(UserDetails.this, "Failed!", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<MyResponse> call, Throwable t) {
+
+                                }
+                            });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });

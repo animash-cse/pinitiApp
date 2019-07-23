@@ -53,7 +53,7 @@ public class AllPeople extends AppCompatActivity {
     private DatabaseReference mDatabase;
     public Toolbar mToolbar;
     private List<AddPeople> peoples;
-        ///    Animash
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,11 +72,11 @@ public class AllPeople extends AppCompatActivity {
         mPeopleList.setHasFixedSize(true);
         mPeopleList.setLayoutManager(new LinearLayoutManager(this));
 
+        loadAllUser();
+
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
+    private void loadAllUser(){
         //mDatabase.keepSynced(true);
         FirebaseRecyclerAdapter<AddPeople, AllPeopleViewHolder> peopleRecyclerAdapter = new FirebaseRecyclerAdapter<AddPeople, AllPeopleViewHolder>(
                 AddPeople.class,
