@@ -19,6 +19,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.piniti.platform.Notification.APIService;
 import com.piniti.platform.Notification.Client;
@@ -43,7 +44,7 @@ public class UserDetails extends AppCompatActivity {
 
     APIService apiService;
 
-    private DatabaseReference databaseUser,reference;
+    private DatabaseReference databaseUser,reference, notify;
     private FirebaseUser fuser;
     public Toolbar mToolbar;
     Intent intent;
@@ -55,6 +56,8 @@ public class UserDetails extends AppCompatActivity {
         apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
         fuser = FirebaseAuth.getInstance().getCurrentUser();
         reference = FirebaseDatabase.getInstance().getReference();
+
+        notify = FirebaseDatabase.getInstance().getReference("Notification");
 
         intent = getIntent();
         userKey = intent.getStringExtra("post_id");
@@ -99,10 +102,11 @@ public class UserDetails extends AppCompatActivity {
                         .child(userKey);
                 chatRef.child("id").setValue(userKey);
 
-                final DatabaseReference chatRefReceiver = FirebaseDatabase.getInstance().getReference("Chatlist")
+                final DatabaseReference chatRefReceiver = FirebaseDatabase.getInstance().getReference("Follow")
                         .child(userKey)
                         .child(fuser.getUid());
                 chatRefReceiver.child("id").setValue(fuser.getUid());
+                chatRefReceiver.child("by").setValue("me");
 
 
                 reference = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
@@ -110,7 +114,8 @@ public class UserDetails extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         AddPeople user = dataSnapshot.getValue(AddPeople.class);
-                        sendNotification(userKey, user.getName(), "Test Follow notification");
+                        sendNotification(userKey, user.getName(), "Following you");
+                        addNotification(userKey, fuser.getUid());
                     }
 
                     @Override
@@ -120,7 +125,14 @@ public class UserDetails extends AppCompatActivity {
                 });
             }
         });
+    }
 
+    private void addNotification(String userid, String fuserid) {
+
+        notify.child(userid).child("from").setValue(fuserid);
+        notify.child(userid).child("to").setValue(userid);
+        notify.child(userid).child("time").setValue(ServerValue.TIMESTAMP);
+        notify.child(userid).child("text").setValue(" Following you");
     }
 
     @Override
@@ -160,7 +172,7 @@ public class UserDetails extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()){
                     Token token = snapshot.getValue(Token.class);
-                    Data data = new Data(fuser.getUid(), R.mipmap.ic_launcher, username+": "+message, "New Notification",
+                    Data data = new Data(fuser.getUid(), R.mipmap.ic_launcher, username+" "+message, "New Notification",
                             userKey);
 
                     Sender sender = new Sender(data, token.getToken());
