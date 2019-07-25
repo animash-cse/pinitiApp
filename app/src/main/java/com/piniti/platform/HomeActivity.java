@@ -32,6 +32,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.piniti.platform.Activity.Notification;
 import com.piniti.platform.Notification.Token;
 
 import java.util.HashMap;
@@ -137,7 +138,8 @@ public class HomeActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.notification) {
-            return true;
+            Intent intent = new Intent(getApplicationContext(), Notification.class);
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);

@@ -22,7 +22,6 @@
         android:roundIcon="@mipmap/ic_launcher_icon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activity.Notification"></activity>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -45,6 +44,7 @@
         <activity
             android:name=".ShowProfile"
             android:parentActivityName=".ProfileActivity" />
+
         <activity android:name=".EditProfile" />
         <activity
             android:name=".Activity.PeopleList"
@@ -52,6 +52,9 @@
         <activity
             android:name=".Activity.AllPeople"
             android:parentActivityName=".HomeActivity" />
+        <activity
+            android:name=".Activity.Notification"
+            android:parentActivityName=".HomeActivity"/>
         <activity android:name=".Authentication" />
         <activity android:name=".Activity.PeopleDetails" />
         <activity

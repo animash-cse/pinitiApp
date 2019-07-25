@@ -24,7 +24,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -150,14 +149,14 @@ public class PeopleList extends AppCompatActivity {
 
 
         Query familySearchQuery = familyDatabase.orderByChild("category").startAt("Family Members").endAt("Family Members");
-        FirebaseRecyclerAdapter<AddPeople, TeacherViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<AddPeople, PeopleList.TeacherViewHolder>(
+        FirebaseRecyclerAdapter<AddPeople, PeopleViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<AddPeople, PeopleViewHolder>(
                 AddPeople.class,
                 R.layout.people_view,
-                PeopleList.TeacherViewHolder.class,
+                PeopleViewHolder.class,
                 familySearchQuery
         ) {
             @Override
-            protected void populateViewHolder(PeopleList.TeacherViewHolder viewHolder, AddPeople model, int position) {
+            protected void populateViewHolder(PeopleViewHolder viewHolder, AddPeople model, int position) {
 
                 final String post_key = getRef(position).getKey();
 
@@ -184,14 +183,14 @@ public class PeopleList extends AppCompatActivity {
 
 
         Query relativesSearchQuery = familyDatabase.orderByChild("category").startAt("Relatives").endAt("Relatives");
-        FirebaseRecyclerAdapter<AddPeople, TeacherViewHolder> relativesRecyclerAdapter = new FirebaseRecyclerAdapter<AddPeople, PeopleList.TeacherViewHolder>(
+        FirebaseRecyclerAdapter<AddPeople, PeopleViewHolder> relativesRecyclerAdapter = new FirebaseRecyclerAdapter<AddPeople, PeopleViewHolder>(
                 AddPeople.class,
                 R.layout.people_view,
-                PeopleList.TeacherViewHolder.class,
+                PeopleViewHolder.class,
                 relativesSearchQuery
         ) {
             @Override
-            protected void populateViewHolder(PeopleList.TeacherViewHolder viewHolder, AddPeople model, int position) {
+            protected void populateViewHolder(PeopleViewHolder viewHolder, AddPeople model, int position) {
 
                 final String post_key = getRef(position).getKey();
 
@@ -217,9 +216,9 @@ public class PeopleList extends AppCompatActivity {
         mRelatives.setAdapter(relativesRecyclerAdapter);
     }
 
-    public static class TeacherViewHolder extends RecyclerView.ViewHolder {
+    private static class PeopleViewHolder extends RecyclerView.ViewHolder {
         View mView;
-        public TeacherViewHolder(View itemView) {
+        public PeopleViewHolder(View itemView) {
             super(itemView);
 
             mView = itemView;

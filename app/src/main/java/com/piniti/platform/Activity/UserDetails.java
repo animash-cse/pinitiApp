@@ -57,7 +57,7 @@ public class UserDetails extends AppCompatActivity {
         fuser = FirebaseAuth.getInstance().getCurrentUser();
         reference = FirebaseDatabase.getInstance().getReference();
 
-        notify = FirebaseDatabase.getInstance().getReference("Notification");
+        notify = FirebaseDatabase.getInstance().getReference("Notification").child(fuser.getUid()).push();
 
         intent = getIntent();
         userKey = intent.getStringExtra("post_id");
@@ -129,10 +129,10 @@ public class UserDetails extends AppCompatActivity {
 
     private void addNotification(String userid, String fuserid) {
 
-        notify.child(userid).child("from").setValue(fuserid);
-        notify.child(userid).child("to").setValue(userid);
-        notify.child(userid).child("time").setValue(ServerValue.TIMESTAMP);
-        notify.child(userid).child("text").setValue(" Following you");
+        notify.child("from").setValue(fuserid);
+        notify.child("to").setValue(userid);
+        notify.child("time").setValue(ServerValue.TIMESTAMP);
+        notify.child("text").setValue(" Following you");
     }
 
     @Override

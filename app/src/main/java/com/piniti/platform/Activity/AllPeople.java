@@ -51,7 +51,7 @@ public class AllPeople extends AppCompatActivity {
 
     private RecyclerView mPeopleList;
     private DatabaseReference mDatabase;
-    public Toolbar mToolbar;
+    private Toolbar mToolbar;
     private List<AddPeople> peoples;
 
     @Override
