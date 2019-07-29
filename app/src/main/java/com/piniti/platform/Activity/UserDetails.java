@@ -35,6 +35,7 @@ import retrofit2.Response;
 
 public class UserDetails extends AppCompatActivity {
 
+    // Declare Button, textview, string, database, toolbar, Intent
     private ImageView mSelectImage;
     private TextView mName, mProfession, mEmail, mAddress, mPhone, mGender;
     private Button chatButton, followButton;
@@ -57,32 +58,34 @@ public class UserDetails extends AppCompatActivity {
         fuser = FirebaseAuth.getInstance().getCurrentUser();
         reference = FirebaseDatabase.getInstance().getReference();
 
-        notify = FirebaseDatabase.getInstance().getReference("Notification").child(fuser.getUid()).push();
-
+        // Get extra String from AllPeople.java
         intent = getIntent();
         userKey = intent.getStringExtra("post_id");
+        notify = FirebaseDatabase.getInstance().getReference("Notification").child(userKey).push();
       //  userKey = getIntent().getExtras().getString("post_id");
 
-        // back Button...
-        mToolbar = (Toolbar) findViewById(R.id.show_profile_app_main_tool_bar);
+        // Create toolbar and back Button...
+        mToolbar = findViewById(R.id.show_profile_app_main_tool_bar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("User Details");
 
-        chatButton = (Button) findViewById(R.id.peopleChat);
+        // Initialize Buttons, Text and Image Views
+        chatButton = findViewById(R.id.peopleChat);
         followButton = findViewById(R.id.follow);
 
-        mSelectImage = (ImageView) findViewById(R.id.imageView);
-        mGender = (TextView) findViewById(R.id.gender);
+        mSelectImage =  findViewById(R.id.imageView);
+        mGender = findViewById(R.id.gender);
 
-        mName = (TextView) findViewById(R.id.name);
-        mEmail = (TextView) findViewById(R.id.email);
-        mProfession = (TextView) findViewById(R.id.profession);
-        mPhone = (TextView) findViewById(R.id.number);
-        mAddress = (TextView) findViewById(R.id.address);
+        mName = findViewById(R.id.name);
+        mEmail = findViewById(R.id.email);
+        mProfession = findViewById(R.id.profession);
+        mPhone = findViewById(R.id.number);
+        mAddress = findViewById(R.id.address);
 
 
 
+        // Chat Button Click
         chatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -91,7 +94,7 @@ public class UserDetails extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
+        // Follow button click
         followButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -114,7 +117,7 @@ public class UserDetails extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         AddPeople user = dataSnapshot.getValue(AddPeople.class);
-                        sendNotification(userKey, user.getName(), "Following you");
+                       // sendNotification(userKey, user.getName(), "Following you");
                         addNotification(userKey, fuser.getUid());
                     }
 
@@ -127,6 +130,7 @@ public class UserDetails extends AppCompatActivity {
         });
     }
 
+    // Add notification in notification layout
     private void addNotification(String userid, String fuserid) {
 
         notify.child("from").setValue(fuserid);
@@ -139,6 +143,7 @@ public class UserDetails extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
+        // When User details page open, instant load user information
         databaseUser = FirebaseDatabase.getInstance().getReference().child("Users").child(userKey);
         databaseUser.addValueEventListener(new ValueEventListener() {
             @Override
@@ -153,8 +158,6 @@ public class UserDetails extends AppCompatActivity {
                 mGender.setText(dataSnapshot.child("gender").getValue(String.class));
                 Glide.with(getApplicationContext()).load(URL).into(mSelectImage);
 
-
-
             }
 
             @Override
@@ -164,6 +167,7 @@ public class UserDetails extends AppCompatActivity {
         });
     }
 
+    // Send Notification to the receiver user notification penal
     private void sendNotification(String receiver, final String username, final String message){
         DatabaseReference tokens = FirebaseDatabase.getInstance().getReference("Tokens");
         Query query = tokens.orderByKey().equalTo(receiver);

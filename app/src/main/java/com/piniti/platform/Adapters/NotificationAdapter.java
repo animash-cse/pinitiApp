@@ -10,9 +10,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.piniti.platform.Models.Chat;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.piniti.platform.Models.NotificationModel;
 import com.piniti.platform.R;
 
@@ -23,6 +26,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
     private Context mContext;
     private List<NotificationModel> mChat;
+    private DatabaseReference getUserDetails;
 
     FirebaseUser fuser;
 
@@ -34,19 +38,33 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     @NonNull
     @Override
     public NotificationAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
         View view = LayoutInflater.from(mContext).inflate(R.layout.notification_view, parent, false);
         return new NotificationAdapter.ViewHolder(view);
 
     }
 
     @Override
-    public void onBindViewHolder(@NonNull NotificationAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final NotificationAdapter.ViewHolder holder, int position) {
 
         NotificationModel chat = mChat.get(position);
+        NotificationModel data = mChat.get(position);
+        getUserDetails = FirebaseDatabase.getInstance().getReference().child("Users").child(chat.getTo());
+        getUserDetails.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                holder.name.setText(dataSnapshot.child("name").getValue(String.class));
+                String URL = (dataSnapshot.child("image").getValue(String.class));
+                Glide.with(mContext).load(URL).into(holder.profile_image);
+            }
 
-        holder.name.setText(chat.getText());
-        holder.time.setText(chat.getTime());
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        holder.subject.setText(chat.getText());
+       // holder.time.setText(chat.getTime());
 
        // Glide.with(mContext).load(imageurl).into(holder.profile_image);
 
@@ -63,6 +81,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         public TextView name;
         public ImageView profile_image;
         public TextView time;
+        public TextView subject;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -70,6 +89,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             name = itemView.findViewById(R.id.name);
             profile_image = itemView.findViewById(R.id.imagePeople);
             time = itemView.findViewById(R.id.time);
+            subject = itemView.findViewById(R.id.subject);
         }
     }
 

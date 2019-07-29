@@ -19,17 +19,22 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.piniti.platform.Adapters.MessageAdapter;
 import com.piniti.platform.Adapters.NotificationAdapter;
 import com.piniti.platform.Models.Chat;
 import com.piniti.platform.Models.NotificationModel;
+import com.piniti.platform.Notification.Token;
 import com.piniti.platform.R;
+import com.piniti.platform.UserAdapter;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.security.AccessController.getContext;
 
 public class Notification extends AppCompatActivity {
 
@@ -38,6 +43,7 @@ public class Notification extends AppCompatActivity {
     private DatabaseReference mNotificationData, reference;
     private FirebaseUser fuser;
     private List<NotificationModel> mchat;
+    private List<UserAdapter> mUsers;
     private NotificationAdapter notificationAdapter;
 
 
@@ -69,7 +75,27 @@ public class Notification extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        reference = FirebaseDatabase.getInstance().getReference("Notification");
+        mchat = new ArrayList<>();
+
+        reference = FirebaseDatabase.getInstance().getReference("Notification").child(fuser.getUid());
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                mchat.clear();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    NotificationModel chatlist = snapshot.getValue(NotificationModel.class);
+                    mchat.add(chatlist);
+                }
+
+                chatList();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        /*reference = FirebaseDatabase.getInstance().getReference("Notification").child(fuser.getUid());
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -89,9 +115,11 @@ public class Notification extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        });
+        });*/
 
-        FirebaseRecyclerAdapter<AddPeople, Notification.NotificationViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<AddPeople, Notification.NotificationViewHolder>(
+        updateToken(FirebaseInstanceId.getInstance().getToken());
+
+        /*FirebaseRecyclerAdapter<AddPeople, Notification.NotificationViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<AddPeople, Notification.NotificationViewHolder>(
                 AddPeople.class,
                 R.layout.notification_view,
                 Notification.NotificationViewHolder.class,
@@ -109,7 +137,39 @@ public class Notification extends AppCompatActivity {
 
             }
         };
-        mNotificationRecycler.setAdapter(firebaseRecyclerAdapter);
+        mNotificationRecycler.setAdapter(firebaseRecyclerAdapter);*/
+    }
+
+    private void chatList() {
+        mUsers = new ArrayList<>();
+        reference = FirebaseDatabase.getInstance().getReference("Users");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                mUsers.clear();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    UserAdapter user = snapshot.getValue(UserAdapter.class);
+                    for (NotificationModel chatlist : mchat){
+                        if (user.getId().equals(chatlist.getTo())){
+                            mUsers.add(user);
+                        }
+                    }
+                }
+                notificationAdapter = new NotificationAdapter(Notification.this, mchat);
+                mNotificationRecycler.setAdapter(notificationAdapter);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void updateToken(String token){
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Tokens");
+        Token token1 = new Token(token);
+        reference.child(fuser.getUid()).setValue(token1);
     }
 
     private static class NotificationViewHolder extends RecyclerView.ViewHolder {

@@ -6,13 +6,14 @@ package com.piniti.platform;
 
 public class UserAdapter {
 
-    private String name, email, profession, address, number, gender, image;
+    private String id, name, email, profession, address, number, gender, image;
 
     public UserAdapter(){
 
     }
 
-    public UserAdapter(String name, String email, String profession, String address, String number, String gender, String image) {
+    public UserAdapter(String id, String name, String email, String profession, String address, String number, String gender, String image) {
+        this.id = id;
         this.name = name;
         this.email = email;
         this.profession = profession;
@@ -20,6 +21,14 @@ public class UserAdapter {
         this.number = number;
         this.gender = gender;
         this.image = image;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {
