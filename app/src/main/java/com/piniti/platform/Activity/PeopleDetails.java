@@ -61,22 +61,22 @@ public class PeopleDetails extends AppCompatActivity {
 
         mPost_key = getIntent().getExtras().getString("post_id");
 
-        mImage = (ImageView) findViewById(R.id.people_image);
-        mName = (TextView) findViewById(R.id.people_name);
-        mCategory = (TextView) findViewById(R.id.people_category);
-        mProfession = (TextView) findViewById(R.id.people_profession);
-        mRelation = (TextView) findViewById(R.id.people_relation);
-        mNumber = (TextView) findViewById(R.id.people_number);
+        mImage = findViewById(R.id.people_image);
+        mName = findViewById(R.id.people_name);
+        mCategory = findViewById(R.id.people_category);
+        mProfession = findViewById(R.id.people_profession);
+        mRelation = findViewById(R.id.people_relation);
+        mNumber = findViewById(R.id.people_number);
 
-        removeButton = (Button)findViewById(R.id.remove);
+        removeButton = findViewById(R.id.remove);
 
-        image = (Button)findViewById(R.id.edit_image);
-        name = (Button)findViewById(R.id.name_edit);
-        category = (Button)findViewById(R.id.cate_edit);
-        profession = (Button)findViewById(R.id.profe_edit);
-        relation = (Button)findViewById(R.id.relation_edit);
-        number = (Button)findViewById(R.id.number_edit);
-        editButton = (Button)findViewById(R.id.edit);
+        image = findViewById(R.id.edit_image);
+        name = findViewById(R.id.name_edit);
+        category = findViewById(R.id.cate_edit);
+        profession = findViewById(R.id.profe_edit);
+        relation = findViewById(R.id.relation_edit);
+        number = findViewById(R.id.number_edit);
+        editButton = findViewById(R.id.edit);
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -90,7 +90,7 @@ public class PeopleDetails extends AppCompatActivity {
                 postProfession = (String) dataSnapshot.child("profession").getValue();
                 postRelation = (String) dataSnapshot.child("relation").getValue();
                 postNumber = (String) dataSnapshot.child("number").getValue();
-                postImage = (String) dataSnapshot.child("image").getValue();
+                postImage = (String) dataSnapshot.child("thumb_image").getValue();
 
 
                 mName.setText(postName);

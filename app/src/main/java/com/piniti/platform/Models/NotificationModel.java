@@ -30,4 +30,12 @@ public class NotificationModel {
     public void setText(String text) {
         this.text = text;
     }
+
+    /*public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }*/
 }

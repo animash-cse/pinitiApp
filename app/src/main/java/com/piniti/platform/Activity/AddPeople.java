@@ -6,29 +6,41 @@ package com.piniti.platform.Activity;
 
 public class AddPeople {
 
+    private String id;
     private String name;
     private String profession;
     private String number;
     private String relation;
     private String category;
     private String image;
+    private String thumb_image;
 
     public AddPeople(){
 
     }
 
-    public AddPeople(String name, String profession, String number,String relation, String category, String image) {
+    public AddPeople(String id, String name, String profession, String number,String relation, String category, String image, String thumb_image) {
+        this.id = id;
         this.name = name;
         this.profession = profession;
         this.number = number;
         this.category = category;
         this.image = image;
+        this.thumb_image = thumb_image;
         this.relation = relation;
     }
 
     public String getRelation() {
 
         return relation;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public void setRelation(String relation) {
@@ -72,5 +84,13 @@ public class AddPeople {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public String getThumb_image() {
+        return thumb_image;
+    }
+
+    public void setThumb_image(String thumb_image) {
+        this.thumb_image = thumb_image;
     }
 }

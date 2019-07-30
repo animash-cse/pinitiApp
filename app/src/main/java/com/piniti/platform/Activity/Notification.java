@@ -1,17 +1,12 @@
 package com.piniti.platform.Activity;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -20,21 +15,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.piniti.platform.Adapters.MessageAdapter;
 import com.piniti.platform.Adapters.NotificationAdapter;
-import com.piniti.platform.Models.Chat;
 import com.piniti.platform.Models.NotificationModel;
 import com.piniti.platform.Notification.Token;
 import com.piniti.platform.R;
 import com.piniti.platform.UserAdapter;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.NetworkPolicy;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static java.security.AccessController.getContext;
 
 public class Notification extends AppCompatActivity {
 
@@ -50,7 +38,7 @@ public class Notification extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_notification);
+        setContentView(R.layout.notification);
 
 
         // Setup Toolbar
@@ -87,7 +75,7 @@ public class Notification extends AppCompatActivity {
                     mchat.add(chatlist);
                 }
 
-                chatList();
+                notificationList();
             }
 
             @Override
@@ -140,7 +128,7 @@ public class Notification extends AppCompatActivity {
         mNotificationRecycler.setAdapter(firebaseRecyclerAdapter);*/
     }
 
-    private void chatList() {
+    private void notificationList() {
         mUsers = new ArrayList<>();
         reference = FirebaseDatabase.getInstance().getReference("Users");
         reference.addValueEventListener(new ValueEventListener() {
@@ -155,7 +143,7 @@ public class Notification extends AppCompatActivity {
                         }
                     }
                 }
-                notificationAdapter = new NotificationAdapter(Notification.this, mchat);
+                notificationAdapter = new NotificationAdapter(getApplicationContext(), mchat);
                 mNotificationRecycler.setAdapter(notificationAdapter);
             }
 
@@ -172,7 +160,7 @@ public class Notification extends AppCompatActivity {
         reference.child(fuser.getUid()).setValue(token1);
     }
 
-    private static class NotificationViewHolder extends RecyclerView.ViewHolder {
+    /*private static class NotificationViewHolder extends RecyclerView.ViewHolder {
         View mView;
         public NotificationViewHolder(View itemView) {
             super(itemView);
@@ -206,5 +194,10 @@ public class Notification extends AppCompatActivity {
             peopleCategory.setText(relation);
         }
 
+    }*/
+
+    @Override
+    protected void onStop() {
+        super.onStop();
     }
 }

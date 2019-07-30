@@ -42,16 +42,13 @@ public class HomeActivity extends AppCompatActivity
 
     private FirebaseAuth mAuth;
     private FirebaseUser user, currentFirebaseUser;
-    private DatabaseReference getUserId, mDatabase, databaseUser, reference;
-    private StorageReference mStorage;
-
-    ValueEventListener seenListener;
+    private DatabaseReference getUserId, databaseUser, reference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
@@ -59,26 +56,12 @@ public class HomeActivity extends AppCompatActivity
 
         mAuth = FirebaseAuth.getInstance();
 
-
-       // userID = (TextView)findViewById(R.id.uid);
-        //userID2 = (TextView)findViewById(R.id.uid2);
         user = mAuth.getCurrentUser();
         getUserId = FirebaseDatabase.getInstance().getReference();
 
         currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         databaseUser = FirebaseDatabase.getInstance().getReference().child("Users").child(currentFirebaseUser.getUid());
 
-        //Toast.makeText(this, "" + currentFirebaseUser.getUid(), Toast.LENGTH_SHORT).show();
-
-        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-                getUserId.child("AllUserID").child(user.getUid()).setValue("userid: "+user.getUid());
-            }
-        });*/
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -197,7 +180,7 @@ public class HomeActivity extends AppCompatActivity
             public void onDataChange(DataSnapshot dataSnapshot) {
                 navUserName.setText(dataSnapshot.child("name").getValue(String.class));
                 navUserProfe.setText(dataSnapshot.child("profession").getValue(String.class));
-                final String URL = (dataSnapshot.child("image").getValue(String.class));
+                final String URL = (dataSnapshot.child("thumb_image").getValue(String.class));
 
                 // mGender.setText(dataSnapshot.child("gender").getValue(String.class));
                 Glide.with(getApplicationContext()).load(URL).into(navUserImage);

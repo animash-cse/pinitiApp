@@ -2,7 +2,9 @@ package com.piniti.platform;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -14,7 +16,9 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -28,14 +32,20 @@ import com.google.firebase.storage.UploadTask;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
-import de.hdodenhof.circleimageview.CircleImageView;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import id.zelory.compressor.Compressor;
 
 public class EditProfile extends AppCompatActivity {
 
-    //private ImageButton mSelectImage;
     private ImageButton mSelectImage;
     private Spinner mGender;
 
+    // Declare edit text
     private EditText mName;
     private EditText mEmail;
     private EditText mPhone;
@@ -44,42 +54,57 @@ public class EditProfile extends AppCompatActivity {
 
     private String URL;
 
-
+    // Declare image location url
     private Uri imageUri = null;
+    // Declare Compress image
+    private Bitmap thumb_Bitmap = null;
+
     private Button mUpdate;
-    private DatabaseReference mDatabase, databaseUser;
+
+    // Declare Database for data fields
+    private DatabaseReference databaseUser;
+
+    // Declare Storage for images
     private StorageReference mStorage;
-    private FirebaseAuth mAuth;
+
+    //  Declare firebase user for get user id
     private FirebaseUser currentFirebaseUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
-        mSelectImage = (ImageButton) findViewById(R.id.imageButton);
-        mGender = (Spinner) findViewById(R.id.gender);
 
-        mName = (EditText) findViewById(R.id.name);
-        mEmail = (EditText) findViewById(R.id.email);
-        mProfession = (EditText) findViewById(R.id.profession);
-        mPhone = (EditText) findViewById(R.id.textNumber);
-        mAddress = (EditText) findViewById(R.id.address);
-        mUpdate = (Button) findViewById(R.id.update);
+        // Initialize image button and spinner
+        mSelectImage = findViewById(R.id.imageButton);
+        mGender = findViewById(R.id.gender);
 
+        // Initialize edit text
+        mName = findViewById(R.id.name);
+        mEmail = findViewById(R.id.email);
+        mProfession = findViewById(R.id.profession);
+        mPhone = findViewById(R.id.textNumber);
+        mAddress = findViewById(R.id.address);
+
+        // Initialize Button
+        mUpdate = findViewById(R.id.update);
+
+        // Here get user id in currentFirebaseUser
         currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        //Toast.makeText(this, "" + currentFirebaseUser.getUid(), Toast.LENGTH_SHORT).show();
 
+        // Set storage and database location
         mStorage = FirebaseStorage.getInstance().getReference().child("UserPhoto");
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
         databaseUser = FirebaseDatabase.getInstance().getReference().child("Users").child(currentFirebaseUser.getUid());
 
+        // Button action for update user information
         mUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startPosting();
+                updateUserInformation();
             }
         });
 
+        // Button action for update image information
         mSelectImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -90,6 +115,7 @@ public class EditProfile extends AppCompatActivity {
             }
         });
 
+        //  View user information and image
         databaseUser.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -98,10 +124,10 @@ public class EditProfile extends AppCompatActivity {
                 mProfession.setText(dataSnapshot.child("profession").getValue(String.class));
                 mPhone.setText(dataSnapshot.child("number").getValue(String.class));
                 mAddress.setText(dataSnapshot.child("address").getValue(String.class));
-                URL = (dataSnapshot.child("image").getValue(String.class));
+                URL = (dataSnapshot.child("thumb_image").getValue(String.class));
 
                 // mGender.setText(dataSnapshot.child("gender").getValue(String.class));
-                Glide.with(EditProfile.this).load(URL).into(mSelectImage);
+                Glide.with(getApplicationContext()).load(URL).into(mSelectImage);
 
             }
 
@@ -112,6 +138,7 @@ public class EditProfile extends AppCompatActivity {
         });
     }
 
+    // Action when click Update user image Button
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
@@ -120,10 +147,25 @@ public class EditProfile extends AppCompatActivity {
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
+                // Get Image Location
                 imageUri = result.getUri();
+                // Set image to Image view
                 mSelectImage.setImageURI(imageUri);
 
-                uploadImage();
+                // Set compress image size and compress to Bitmap
+                File thumb_filePath_Uri = new File(imageUri.getPath());
+                try{
+                    thumb_Bitmap = new Compressor(this)
+                            .setMaxWidth(200)
+                            .setMaxHeight(200)
+                            .setQuality(45)
+                            .compressToBitmap(thumb_filePath_Uri);
+                } catch (IOException e){
+                    e.printStackTrace();
+                }
+
+                uploadImage();  // Uploading process
+
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
                 Toast.makeText(this, ""+error, Toast.LENGTH_SHORT).show();
@@ -131,27 +173,66 @@ public class EditProfile extends AppCompatActivity {
         }
     }
     public void uploadImage(){
+        // Show loading bar in the screen
         final ProgressDialog progressBar = new ProgressDialog(EditProfile.this, R.style.AppTheme_Dark_Dialog);
         progressBar.setIndeterminate(true);
         progressBar.setCanceledOnTouchOutside(false);
         progressBar.setMessage("Adding Image..");
         progressBar.show();
 
-        StorageReference filePath = mStorage.child(currentFirebaseUser.getUid());
+        //  Original and compress image storage location
+        StorageReference filePath = mStorage.child(currentFirebaseUser.getUid()).child("ProfileImage");
+        final StorageReference thumbPath = mStorage.child(currentFirebaseUser.getUid()).child("ThumbImage");
 
+        //  Compressing original image to low quality image
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        thumb_Bitmap.compress(Bitmap.CompressFormat.JPEG, 45, byteArrayOutputStream);
+        final byte[] thumb_byte = byteArrayOutputStream.toByteArray();
+
+        // Upload User original image and compress image
         filePath.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                String downloadUrl = taskSnapshot.getDownloadUrl().toString();
-                mDatabase.child(currentFirebaseUser.getUid()).child("image").setValue(downloadUrl);
+                final String downloadUrl = taskSnapshot.getDownloadUrl().toString();
+
+                //  Perform action to upload compress image to database and storage
+                UploadTask uploadTask = thumbPath.putBytes(thumb_byte);
+                uploadTask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                        String thumb_downloadUri = task.getResult().getDownloadUrl().toString();
+                        if(task.isSuccessful()){
+                            Map update_user_data = new HashMap();
+                            update_user_data.put("image", downloadUrl);
+                            update_user_data.put("thumb_image", thumb_downloadUri);
+
+                            databaseUser.updateChildren(update_user_data).addOnCompleteListener(new OnCompleteListener() {
+                                @Override
+                                public void onComplete(@NonNull Task task) {
+
+                                    // View image to Image button after upload image
+                                    mSelectImage.setImageURI(imageUri);
+                                    Toast.makeText(EditProfile.this, "Image Updated", Toast.LENGTH_LONG).show();
+                                    progressBar.dismiss();
+                                }
+                            });
+                        }
+                        else{
+                            Toast.makeText(getApplicationContext(), "Faild to Image upload", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+
+                /*mDatabase.child(currentFirebaseUser.getUid()).child("image").setValue(downloadUrl);
+
                 mSelectImage.setImageURI(imageUri);
                 Toast.makeText(EditProfile.this, "Image Updated", Toast.LENGTH_LONG).show();
-                progressBar.dismiss();
+                progressBar.dismiss();*/
             }
         });
     }
 
-    private void startPosting() {
+    private void updateUserInformation() {
         //final String user_id = mAuth.getCurrentUser().getUid();
 
         final String nameV =  mName.getText().toString().trim();
@@ -164,12 +245,12 @@ public class EditProfile extends AppCompatActivity {
         if(!TextUtils.isEmpty(nameV) && !TextUtils.isEmpty(emailV) && !TextUtils.isEmpty(professionV) && !TextUtils.isEmpty(addressV) &&
                 !TextUtils.isEmpty(numberV)&& !TextUtils.isEmpty(genderV))
         {
-            mDatabase.child(currentFirebaseUser.getUid()).child("name").setValue(nameV);
-            mDatabase.child(currentFirebaseUser.getUid()).child("profession").setValue(professionV);
-            mDatabase.child(currentFirebaseUser.getUid()).child("address").setValue(addressV);
-            mDatabase.child(currentFirebaseUser.getUid()).child("number").setValue(numberV);
-            mDatabase.child(currentFirebaseUser.getUid()).child("email").setValue(emailV);
-            mDatabase.child(currentFirebaseUser.getUid()).child("gender").setValue(genderV);
+            databaseUser.child("name").setValue(nameV);
+            databaseUser.child("profession").setValue(professionV);
+            databaseUser.child("address").setValue(addressV);
+            databaseUser.child("number").setValue(numberV);
+            databaseUser.child("email").setValue(emailV);
+            databaseUser.child("gender").setValue(genderV);
 
             Toast.makeText(this, "Updated Successfully", Toast.LENGTH_LONG).show();
             Intent intent = new Intent(EditProfile.this, ShowProfile.class);

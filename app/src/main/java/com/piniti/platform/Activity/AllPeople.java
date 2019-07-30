@@ -92,7 +92,7 @@ public class AllPeople extends AppCompatActivity {
                 viewHolder.setName(model.getName());
                 viewHolder.setProfession(model.getProfession());
 
-                viewHolder.setImage(getApplicationContext(), model.getImage());
+                viewHolder.setThumbImage(getApplicationContext(), model.getThumb_image());
 
                 viewHolder.mView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -123,10 +123,10 @@ public class AllPeople extends AppCompatActivity {
             teacherName.setText(name);
         }
 
-        public void setImage(final Context ctx, final String image){
+        public void setThumbImage(final Context ctx, final String thumb_image){
             final ImageView peopleImage = mView.findViewById(R.id.imagePeople);
 
-            Picasso.with(ctx).load(image).networkPolicy(NetworkPolicy.OFFLINE).into(peopleImage, new Callback() {
+            Picasso.with(ctx).load(thumb_image).networkPolicy(NetworkPolicy.OFFLINE).into(peopleImage, new Callback() {
                 @Override
                 public void onSuccess() {
 
@@ -134,7 +134,7 @@ public class AllPeople extends AppCompatActivity {
 
                 @Override
                 public void onError() {
-                    Picasso.with(ctx).load(image).into(peopleImage);
+                    Picasso.with(ctx).load(thumb_image).into(peopleImage);
                 }
             });
         }
@@ -193,7 +193,7 @@ public class AllPeople extends AppCompatActivity {
                 viewHolder.setName(model.getName());
                 viewHolder.setProfession(model.getProfession());
 
-                viewHolder.setImage(getApplicationContext(), model.getImage());
+                viewHolder.setThumbImage(getApplicationContext(), model.getThumb_image());
 
                 viewHolder.mView.setOnClickListener(new View.OnClickListener() {
                     @Override

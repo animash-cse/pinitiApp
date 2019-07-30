@@ -53,7 +53,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 holder.name.setText(dataSnapshot.child("name").getValue(String.class));
-                String URL = (dataSnapshot.child("image").getValue(String.class));
+                String URL = (dataSnapshot.child("thumb_image").getValue(String.class));
                 Glide.with(mContext).load(URL).into(holder.profile_image);
             }
 
@@ -64,7 +64,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         });
 
         holder.subject.setText(chat.getText());
-       // holder.time.setText(chat.getTime());
+        //holder.time.setText(chat.getTime());
 
        // Glide.with(mContext).load(imageurl).into(holder.profile_image);
 
@@ -100,4 +100,6 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
         }
     }*/
+
+
 }
