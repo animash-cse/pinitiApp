@@ -1,4 +1,4 @@
-package com.piniti.platform.Activity;
+package com.piniti.platform.Models;
 
 /**
  * Created by Animash on 5/22/2019.

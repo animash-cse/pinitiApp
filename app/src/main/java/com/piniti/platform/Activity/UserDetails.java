@@ -21,6 +21,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
+import com.piniti.platform.Models.AddPeople;
 import com.piniti.platform.Notification.APIService;
 import com.piniti.platform.Notification.Client;
 import com.piniti.platform.Notification.Data;
@@ -117,7 +118,7 @@ public class UserDetails extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         AddPeople user = dataSnapshot.getValue(AddPeople.class);
-                       // sendNotification(userKey, user.getName(), "Following you");
+                        //sendNotification(userKey, user.getName(), "Following you");
                         addNotification(userKey, fuser.getUid());
                     }
 

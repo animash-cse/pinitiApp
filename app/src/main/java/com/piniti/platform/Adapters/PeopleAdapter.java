@@ -13,7 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.piniti.platform.Activity.AddPeople;
+import com.piniti.platform.Models.AddPeople;
 import com.piniti.platform.R;
 
 import java.util.List;

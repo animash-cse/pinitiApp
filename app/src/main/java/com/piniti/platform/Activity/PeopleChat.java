@@ -1,7 +1,6 @@
 package com.piniti.platform.Activity;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -24,6 +23,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.piniti.platform.Adapters.MessageAdapter;
+import com.piniti.platform.Models.AddPeople;
 import com.piniti.platform.Models.Chat;
 import com.piniti.platform.Notification.APIService;
 import com.piniti.platform.Notification.Client;

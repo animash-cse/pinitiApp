@@ -41,6 +41,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import com.piniti.platform.Adapters.PeopleAdapter;
+import com.piniti.platform.Models.AddPeople;
 import com.piniti.platform.R;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Callback;
