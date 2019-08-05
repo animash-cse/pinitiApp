@@ -1,11 +1,11 @@
 package com.piniti.platform;
 
 import android.content.Context;
-import android.support.multidex.MultiDex;
-import android.support.multidex.MultiDexApplication;
+import androidx.multidex.MultiDex;
+import androidx.multidex.MultiDexApplication;
 
 import com.google.firebase.database.FirebaseDatabase;
-import com.squareup.picasso.OkHttpDownloader;
+//import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -20,7 +20,7 @@ public class Piniti extends MultiDexApplication {
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
 
         Picasso.Builder builder = new Picasso.Builder(this);
-        builder.downloader(new OkHttpDownloader(this,Integer.MAX_VALUE));
+        //builder.downloader(new OkHttpDownloader(this,Integer.MAX_VALUE));
         Picasso build = builder.build();
         build.setIndicatorsEnabled(false);      //---------- When publish its will be true
         build.setLoggingEnabled(true);

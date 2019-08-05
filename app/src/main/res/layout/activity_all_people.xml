@@ -13,12 +13,22 @@
         layout="@layout/app_bar_layout">
     </include>
 
-    <android.support.v7.widget.RecyclerView
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Not found"
+        android:textSize="20sp"
+        android:gravity="center_horizontal"
+        android:id="@+id/notFoundTV"
+        android:visibility="gone"
+        />
+
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler"
         android:layout_marginTop="5dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-    </android.support.v7.widget.RecyclerView>
+    </androidx.recyclerview.widget.RecyclerView>
 
 </LinearLayout>

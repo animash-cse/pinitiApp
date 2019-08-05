@@ -5,8 +5,8 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -27,6 +28,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.piniti.platform.R;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
@@ -99,7 +101,12 @@ public class PeopleDetails extends AppCompatActivity {
                 mRelation.setText(postRelation);
                 mNumber.setText(postNumber);
 
-                Picasso.with(PeopleDetails.this).load(postImage).into(mImage);
+                //Old =   Picasso.with(PeopleDetails.this).load(postImage).into(mImage);
+                Picasso.get()
+                        .load(postImage)
+                        .networkPolicy(NetworkPolicy.OFFLINE) // for Offline
+                        .placeholder(R.drawable.ic_launcher_foreground)
+                        .into(mImage);
 
 
                 if(mAuth.getCurrentUser() != null){
@@ -309,9 +316,32 @@ public class PeopleDetails extends AppCompatActivity {
                 progressBar.setMessage("Adding Image...");
                 progressBar.show();
 
-                StorageReference filePath = mStorage.child("Users").child(currentFirebaseUser.getUid()).child("Peoples").child(imageUri.getLastPathSegment());
+                final StorageReference filePath = mStorage.child("Users").child(currentFirebaseUser.getUid()).child("Peoples").child(imageUri.getLastPathSegment());
 
-                filePath.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+
+                UploadTask uploadTask = filePath.putFile(imageUri);
+
+                uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        // this is where we will end up if our image uploads successfully.
+                        Task<Uri> downloadUrl = filePath.getDownloadUrl();
+                        downloadUrl.addOnSuccessListener(new OnSuccessListener<Uri>() {
+
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                String imageReference = uri.toString();
+                                mDatabase.child(mPost_key).child("imageUrl").setValue(imageReference);
+                                Toast.makeText(PeopleDetails.this, "Image Updated", Toast.LENGTH_SHORT).show();
+                                progressBar.dismiss();
+                            }
+                        });
+                    }
+                });
+
+
+                /*filePath.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         Uri downloadUrl = taskSnapshot.getDownloadUrl();
@@ -321,7 +351,7 @@ public class PeopleDetails extends AppCompatActivity {
                         progressBar.dismiss();
 
                     }
-                });
+                });*/
 
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();

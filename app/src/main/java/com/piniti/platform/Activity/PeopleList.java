@@ -8,10 +8,10 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.Menu;
@@ -27,7 +27,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.support.v7.widget.Toolbar;
+import androidx.appcompat.widget.Toolbar;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -78,7 +78,7 @@ public class PeopleList extends AppCompatActivity {
         setContentView(R.layout.people_list);
 
         // back Button...
-        mToolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.people_list_app_main_tool_bar);
+        mToolbar = (androidx.appcompat.widget.Toolbar) findViewById(R.id.people_list_app_main_tool_bar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("My People");
@@ -90,7 +90,6 @@ public class PeopleList extends AppCompatActivity {
 
         currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
-        String id = currentFirebaseUser.toString();
         storageDirectory = FirebaseStorage.getInstance().getReference().child("Users").child(currentFirebaseUser.getUid()).child("Peoples");
        // mDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
         databaseDirectory = FirebaseDatabase.getInstance().getReference().child("Users").child(currentFirebaseUser.getUid()).child("Peoples").push();
@@ -119,7 +118,7 @@ public class PeopleList extends AppCompatActivity {
         mRelatives.setHasFixedSize(true);
         mRelatives.setLayoutManager(new LinearLayoutManager(this));
 
-        popUp();
+        //popUp();
        // retrievePeopleData();
 
     }
@@ -150,7 +149,7 @@ public class PeopleList extends AppCompatActivity {
 
 
         Query familySearchQuery = familyDatabase.orderByChild("category").startAt("Family Members").endAt("Family Members");
-        FirebaseRecyclerAdapter<AddPeople, PeopleViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<AddPeople, PeopleViewHolder>(
+        /*FirebaseRecyclerAdapter<AddPeople, PeopleViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<AddPeople, PeopleViewHolder>(
                 AddPeople.class,
                 R.layout.people_view,
                 PeopleViewHolder.class,
@@ -215,8 +214,9 @@ public class PeopleList extends AppCompatActivity {
             }
         };
         mRelatives.setAdapter(relativesRecyclerAdapter);
-    }
+    }*/
 
+/*
     private static class PeopleViewHolder extends RecyclerView.ViewHolder {
         View mView;
         public PeopleViewHolder(View itemView) {
@@ -419,6 +419,7 @@ public class PeopleList extends AppCompatActivity {
         }
 
     }
+*/
 
 
-}
+}}

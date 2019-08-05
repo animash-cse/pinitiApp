@@ -62,14 +62,6 @@
         <activity android:name=".Activity.PeopleChat" />
 
         <service
-            android:name=".Notification.MyFirebaseIdService"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
-            </intent-filter>
-        </service>
-        <service
             android:name=".Notification.MyFirebaseMessaging"
             android:enabled="true"
             android:exported="true">
