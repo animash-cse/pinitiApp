@@ -85,7 +85,6 @@ public class AllPeople extends AppCompatActivity {
 
         searchInput = findViewById(R.id.serachInput);
         notFoundTV = findViewById(R.id.notFoundTV);
-        backButton = findViewById(R.id.backButton);
         searchInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -103,13 +102,6 @@ public class AllPeople extends AppCompatActivity {
             }
         });
 
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
 
         // Setup recycler view
         peoples_list = findViewById(R.id.recycler);
@@ -118,6 +110,45 @@ public class AllPeople extends AppCompatActivity {
 
         peoplesDatabaseReference = FirebaseDatabase.getInstance().getReference().child("Users");
         peoplesDatabaseReference.keepSynced(true); // for offline
+
+        FirebaseRecyclerOptions<AddPeople> recyclerOptions = new FirebaseRecyclerOptions.Builder<AddPeople>()
+                .setQuery(peoplesDatabaseReference, AddPeople.class)
+                .build();
+
+        FirebaseRecyclerAdapter<AddPeople, SearchPeopleVH> adapter = new FirebaseRecyclerAdapter<AddPeople, SearchPeopleVH>(recyclerOptions) {
+            @Override
+            protected void onBindViewHolder(@NonNull SearchPeopleVH holder, final int position, @NonNull AddPeople model) {
+                holder.name.setText(model.getName());
+                holder.profession.setText(model.getProfession());
+
+                Picasso.get()
+                        .load(model.getThumb_image())
+                        .networkPolicy(NetworkPolicy.OFFLINE) // for Offline
+                        .placeholder(R.drawable.ic_launcher_foreground)
+                        .into(holder.profile_pic);
+
+                /**on list >> clicking item, then, go to single user profile*/
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String visit_user_id = getRef(position).getKey();
+                        Intent ditailsIntent = new Intent(AllPeople.this, UserDetails.class);
+                        ditailsIntent.putExtra("post_id", visit_user_id);
+                        startActivity(ditailsIntent);
+                    }
+                });
+
+            }
+
+            @NonNull
+            @Override
+            public SearchPeopleVH onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
+                View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.people_view, viewGroup, false);
+                return new SearchPeopleVH(view);
+            }
+        };
+        peoples_list.setAdapter(adapter);
+        adapter.startListening();
 
 
     }
@@ -185,51 +216,6 @@ public class AllPeople extends AppCompatActivity {
         }
     }
 
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        FirebaseRecyclerOptions<AddPeople> recyclerOptions = new FirebaseRecyclerOptions.Builder<AddPeople>()
-                .setQuery(peoplesDatabaseReference, AddPeople.class)
-                .build();
-
-        FirebaseRecyclerAdapter<AddPeople, SearchPeopleVH> adapter = new FirebaseRecyclerAdapter<AddPeople, SearchPeopleVH>(recyclerOptions) {
-            @Override
-            protected void onBindViewHolder(@NonNull SearchPeopleVH holder, final int position, @NonNull AddPeople model) {
-                holder.name.setText(model.getName());
-                holder.profession.setText(model.getProfession());
-
-                Picasso.get()
-                        .load(model.getThumb_image())
-                        .networkPolicy(NetworkPolicy.OFFLINE) // for Offline
-                        .placeholder(R.drawable.ic_launcher_foreground)
-                        .into(holder.profile_pic);
-
-                /**on list >> clicking item, then, go to single user profile*/
-                holder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String visit_user_id = getRef(position).getKey();
-                        Intent ditailsIntent = new Intent(AllPeople.this, UserDetails.class);
-                        ditailsIntent.putExtra("post_id", visit_user_id);
-                        startActivity(ditailsIntent);
-                    }
-                });
-
-            }
-
-            @NonNull
-            @Override
-            public SearchPeopleVH onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
-                View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.people_view, viewGroup, false);
-                return new SearchPeopleVH(view);
-            }
-        };
-        peoples_list.setAdapter(adapter);
-        adapter.startListening();
-
-    }
 
     /*
         private void loadAllUser(){
@@ -307,8 +293,19 @@ public class AllPeople extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.search_filter, menu);
 
-        MenuItem searchItem = menu.findItem(R.id.search);
-        SearchView searchView = (SearchView) searchItem.getActionView();
+        final MenuItem filterItem = menu.findItem(R.id.filter);
+        final MenuItem searchItem = menu.findItem(R.id.search);
+
+        searchItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                searchInput.setVisibility(View.VISIBLE);
+                filterItem.setVisible(false);
+                searchItem.setVisible(false);
+                return true;
+            }
+        });
+        /*SearchView searchView = (SearchView) searchItem.getActionView();
 
         searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
 
@@ -328,7 +325,7 @@ public class AllPeople extends AppCompatActivity {
                 //searchQuery(query);
                 return false;
             }
-        });
+        });*/
         return true;
 
     }

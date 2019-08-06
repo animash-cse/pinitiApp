@@ -15,7 +15,6 @@
         android:title="Search"
         android:icon="@drawable/ic_search_black_24dp"
         app:showAsAction="ifRoom|collapseActionView"
-        app:actionViewClass="androidx.appcompat.widget.SearchView"
         android:actionLayout="@layout/search_bar"
         />
 
