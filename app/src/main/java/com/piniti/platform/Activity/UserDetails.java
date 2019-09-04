@@ -1,17 +1,32 @@
 package com.piniti.platform.Activity;
 
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
+
+import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -21,6 +36,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.piniti.platform.Models.AddPeople;
 import com.piniti.platform.Notification.APIService;
 import com.piniti.platform.Notification.Client;
@@ -29,6 +46,8 @@ import com.piniti.platform.Notification.MyResponse;
 import com.piniti.platform.Notification.Sender;
 import com.piniti.platform.Notification.Token;
 import com.piniti.platform.R;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -39,17 +58,25 @@ public class UserDetails extends AppCompatActivity {
     // Declare Button, textview, string, database, toolbar, Intent
     private ImageView mSelectImage;
     private TextView mName, mProfession, mEmail, mAddress, mPhone, mGender;
-    private Button chatButton, followButton;
+    private Button chatButton, followButton, addButton;
 
     private String URL;
     private String userKey = null;
 
-    APIService apiService;
+    private APIService apiService;
 
-    private DatabaseReference databaseUser,reference, notify;
+    private DatabaseReference databaseUser,reference, notify, adding;
     private FirebaseUser fuser;
     public Toolbar mToolbar;
-    Intent intent;
+    private Intent intent;
+
+    // Pop Up Menu
+    private Dialog popAddPeople;
+    private Spinner pCategory, pRelation;
+    private Button pAdd;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,7 +90,7 @@ public class UserDetails extends AppCompatActivity {
         intent = getIntent();
         userKey = intent.getStringExtra("post_id");
         notify = FirebaseDatabase.getInstance().getReference("Notification").child(userKey).push();
-      //  userKey = getIntent().getExtras().getString("post_id");
+        adding = FirebaseDatabase.getInstance().getReference("AddPeople").child(userKey).push();
 
         // Create toolbar and back Button...
         mToolbar = findViewById(R.id.show_profile_app_main_tool_bar);
@@ -74,6 +101,7 @@ public class UserDetails extends AppCompatActivity {
         // Initialize Buttons, Text and Image Views
         chatButton = findViewById(R.id.peopleChat);
         followButton = findViewById(R.id.follow);
+        addButton = findViewById(R.id.peopleAdd);
 
         mSelectImage =  findViewById(R.id.imageView);
         mGender = findViewById(R.id.gender);
@@ -129,6 +157,15 @@ public class UserDetails extends AppCompatActivity {
                 });
             }
         });
+
+        // Add button functionality
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popAddPeople.show();
+            }
+        });
+        popUp();
     }
 
     // Add notification in notification layout
@@ -138,6 +175,15 @@ public class UserDetails extends AppCompatActivity {
         notify.child("to").setValue(userid);
         notify.child("time").setValue(ServerValue.TIMESTAMP);
         notify.child("text").setValue(" Following you");
+    }
+
+    // Add notification in notification layout
+    private void addPeople(String userid, String fuserid) {
+
+        notify.child("from").setValue(fuserid);
+        notify.child("to").setValue(userid);
+        notify.child("time").setValue(ServerValue.TIMESTAMP);
+        notify.child("text").setValue(" Adding you");
     }
 
     @Override
@@ -154,7 +200,7 @@ public class UserDetails extends AppCompatActivity {
                 mProfession.setText(dataSnapshot.child("profession").getValue(String.class));
                 mPhone.setText(dataSnapshot.child("number").getValue(String.class));
                 mAddress.setText(dataSnapshot.child("address").getValue(String.class));
-                URL = (dataSnapshot.child("image").getValue(String.class));
+                URL = (dataSnapshot.child("thumb_image").getValue(String.class));
 
                 mGender.setText(dataSnapshot.child("gender").getValue(String.class));
                 Glide.with(getApplicationContext()).load(URL).into(mSelectImage);
@@ -206,5 +252,84 @@ public class UserDetails extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void popUp() {
+        // Popup Manu inti..
+        popAddPeople = new Dialog(this);
+        popAddPeople.setContentView(R.layout.popup_add_people);
+       // popAddPeople.getWindow().setBackgroundDrawable(new ColorDrawable(Color.GRAY));
+        popAddPeople.getWindow().setLayout(Toolbar.LayoutParams.MATCH_PARENT,Toolbar.LayoutParams.WRAP_CONTENT);
+        popAddPeople.getWindow().getAttributes().gravity = Gravity.BOTTOM;
+
+
+        //Popup Widgets
+        pCategory = popAddPeople.findViewById(R.id.spinner_category);
+        pRelation = popAddPeople.findViewById(R.id.spinner_relation);
+
+        final String sGroup[] = {"Select Group","Family Members", "Relatives", "Friends", "Neighbors",
+                "Co-Workers", "Important People", "Special People", "Following", "Followers"};
+        final String sFamilyMember[] = {"Select Family Member","Father", "Mother", "Sister", "Brother", "Spouse", "Son", "Daughter"};
+        final String sRelatives[] = {"Select Relatives","Grand Father", "Grand Mother", "Uncle", "Aunt", "Cousin", "Nephew", "Niece", "Father-in-law",
+                "Mother-in-law", "Son-in-law", "Daughter-in-law", "Brother-in-law", "Sister-in-law"};
+        final String sOthers[] = {"Select Relationship", "Friends", "Neighbors", "Co-Workers", "Important People", "Special People", "Following", "Followers"};
+
+        final ArrayAdapter<String> group = new ArrayAdapter<String>(UserDetails.this, android.R.layout.simple_spinner_dropdown_item, sGroup);
+        pCategory.setAdapter(group);
+
+        pCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String pos = sGroup[position];
+                if(position == 1){
+                    ArrayAdapter<String> family = new ArrayAdapter<>(UserDetails.this, android.R.layout.simple_spinner_dropdown_item, sFamilyMember);
+                    pRelation.setAdapter(family);
+                }
+                else if(position == 2){
+                    ArrayAdapter<String> family = new ArrayAdapter<>(UserDetails.this, android.R.layout.simple_spinner_dropdown_item, sRelatives);
+                    pRelation.setAdapter(family);
+                }else{
+                    ArrayAdapter<String> family = new ArrayAdapter<>(UserDetails.this, android.R.layout.simple_spinner_dropdown_item, sOthers);
+                    pRelation.setAdapter(family);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        // People add Button
+        pAdd = popAddPeople.findViewById(R.id.add);
+        pAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startPosting();
+            }
+        });
+    }
+
+    private void startPosting() {
+        final ProgressDialog progressBar = new ProgressDialog(UserDetails.this, R.style.AppTheme_Dark_Dialog);
+        progressBar.setIndeterminate(true);
+        progressBar.setCanceledOnTouchOutside(false);
+        progressBar.setMessage("Adding People...");
+        progressBar.show();
+
+        String GroupValue = pCategory.getSelectedItem().toString();
+        String relationValue = pRelation.getSelectedItem().toString();
+
+        if(GroupValue.equals("Select Group") && relationValue.equals("Select Family Member") && relationValue.equals("Select Relatives") && relationValue.equals("Select Relationship")){
+            Toast.makeText(UserDetails.this, "Select a Category and Relationship", Toast.LENGTH_LONG).show();
+            progressBar.dismiss();
+        }else{
+
+            final String categoryV = GroupValue;
+            final String relationV = relationValue;
+
+
+
+        }
     }
 }

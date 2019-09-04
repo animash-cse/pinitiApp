@@ -63,10 +63,11 @@ public class AllPeople extends AppCompatActivity {
         mToolbar = findViewById(R.id.all_people_app_main_tool_bar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("All People");
+        //getSupportActionBar().setTitle("People");
 
         final ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowCustomEnabled(true);
+        actionBar.setTitle("People");
 
         /*peoples = new ArrayList<>();
 
@@ -82,6 +83,9 @@ public class AllPeople extends AppCompatActivity {
                 this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = layoutInflater.inflate(R.layout.appbar_search, null);
         actionBar.setCustomView(view);
+
+        peoplesDatabaseReference = FirebaseDatabase.getInstance().getReference().child("Users");
+        peoplesDatabaseReference.keepSynced(true); // for offline
 
         searchInput = findViewById(R.id.serachInput);
         notFoundTV = findViewById(R.id.notFoundTV);
@@ -107,9 +111,6 @@ public class AllPeople extends AppCompatActivity {
         peoples_list = findViewById(R.id.recycler);
         peoples_list.setHasFixedSize(true);
         peoples_list.setLayoutManager(new LinearLayoutManager(this));
-
-        peoplesDatabaseReference = FirebaseDatabase.getInstance().getReference().child("Users");
-        peoplesDatabaseReference.keepSynced(true); // for offline
 
         FirebaseRecyclerOptions<AddPeople> recyclerOptions = new FirebaseRecyclerOptions.Builder<AddPeople>()
                 .setQuery(peoplesDatabaseReference, AddPeople.class)
@@ -366,5 +367,8 @@ public class AllPeople extends AppCompatActivity {
 
     }*/
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
 }

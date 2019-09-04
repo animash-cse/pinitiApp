@@ -6,13 +6,13 @@ package com.piniti.platform;
 
 public class UserAdapter {
 
-    private String id, name, email, profession, address, number, gender, image, thumb_image;
+    private String id, name, email, profession, address, number, gender, image, thumb_image, tag;
 
     public UserAdapter(){
 
     }
 
-    public UserAdapter(String id, String name, String email, String profession, String address, String number, String gender, String image, String thumb_image) {
+    public UserAdapter(String id, String name, String email, String profession, String address, String number, String gender, String image, String thumb_image,String tag) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -22,6 +22,7 @@ public class UserAdapter {
         this.gender = gender;
         this.image = image;
         this.thumb_image = thumb_image;
+        this.tag = tag;
     }
 
     public String getId() {
@@ -94,5 +95,13 @@ public class UserAdapter {
 
     public void setThumb_image(String thumb_image) {
         this.thumb_image = thumb_image;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
     }
 }

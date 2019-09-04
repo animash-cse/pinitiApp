@@ -50,6 +50,7 @@ public class HomeActivity extends AppCompatActivity
         getSupportActionBar().setCustomView(R.layout.action_bar_title);
 
         databaseUser = FirebaseDatabase.getInstance().getReference().child("Users").child(currentFirebaseUser.getUid());
+        databaseUser.keepSynced(true);
 
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);

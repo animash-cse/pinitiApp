@@ -3,6 +3,8 @@ package com.piniti.platform.Activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
@@ -73,6 +75,7 @@ public class Notification extends AppCompatActivity {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()){
                     NotificationModel chatlist = snapshot.getValue(NotificationModel.class);
                     mchat.add(chatlist);
+                    Log.d("Notifi", String.valueOf(mchat));
                 }
 
                 notificationList();
@@ -140,6 +143,7 @@ public class Notification extends AppCompatActivity {
                     for (NotificationModel chatlist : mchat){
                         if (user.getId().equals(chatlist.getTo())){
                             mUsers.add(user);
+                            Log.d("userID", String.valueOf(mUsers));
                         }
                     }
                 }
